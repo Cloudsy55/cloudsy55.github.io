@@ -16,15 +16,15 @@ class _LoginPageState extends State<LoginPage> {
       String username = _usernameController.text;
       String password = _passwordController.text;
 
-      if (username == 'admin' && password == 'password') {
-        setState(() {
+      setState(() {
+        if (username == 'admin' && password == 'password') {
           _loginMessage = "Login successful!";
-        });
-      } else {
-        setState(() {
+          _usernameController.clear();
+          _passwordController.clear();
+        } else {
           _loginMessage = "Invalid username or password.";
-        });
-      }
+        }
+      });
     }
   }
 
@@ -32,62 +32,71 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(labelText: "Username"),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter your username";
-                      }
-                      return null;
-                    },
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 400),
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(labelText: "Username"),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter your username";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16), // Space between fields
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(labelText: "Password"),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter your password";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _attemptLogin,
+                        child: Text("Login"),
+                      ),
+                    ],
                   ),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(labelText: "Password"),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter your password";
-                      }
-                      return null;
-                    },
+                ),
+                SizedBox(height: 20),
+                Text(
+                  _loginMessage,
+                  style: TextStyle(
+                    color: _loginMessage == "Login successful!" ? Colors.green : Colors.red,
+                    fontSize: 16,
                   ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _attemptLogin,
-                    child: Text("Login"),
-                  ),
-                ],
-              ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/signup');
+                  },
+                  child: Text("Create Account"),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
-            Text(
-              _loginMessage,
-              style: TextStyle(
-                color: _loginMessage == "Login successful!" ? Colors.green : Colors.red,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/signup');
-              },
-              child: Text("Create Account"),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
+
